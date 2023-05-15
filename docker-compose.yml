@@ -1,0 +1,43 @@
+version: '3.5'
+
+services:
+  master:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MASTER_MYSQL_USER}
+      MYSQL_PASSWORD: ${MASTER_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - 4406:3306
+    volumes:
+      - ./configs/master.conf:/etc/mysql/conf.d/mysql.conf.cnf
+
+  slave1:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${SLAVE1_MYSQL_USER}
+      MYSQL_PASSWORD: ${SLAVE1_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - 5506:3306
+    depends_on:
+      - master
+    volumes:
+      - ./configs/slave1.conf:/etc/mysql/conf.d/mysql.conf.cnf
+  
+  slave2:
+    image: mysql:8.0.33
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${SLAVE2_MYSQL_USER}
+      MYSQL_PASSWORD: ${SLAVE2_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    restart: "no"
+    ports:
+      - 6606:3306
+    depends_on:
+      - master
+    volumes:
+      - ./configs/slave2.conf:/etc/mysql/conf.d/mysql.conf.cnf
